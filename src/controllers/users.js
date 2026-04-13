@@ -1,5 +1,10 @@
+const usersData = [
+  { id: '1', name: 'Нікіта', role: 'Студент' },
+  { id: '2', name: 'Олександр', role: 'Викладач' }
+];
+
 export const getUsersHandler = (req, res) => {
-  res.end('Get users route');
+  res.render('users.pug', { users: usersData });
 }
 
 export const postUserHandler = (req, res) => {
@@ -7,8 +12,12 @@ export const postUserHandler = (req, res) => {
 }
 
 export const getUserByIdHandler = (req, res) => {
-  const userId = req.params.id || 'unknown';
-  res.end(`Get user by Id route: ${userId}`);
+  const userId = req.params.userId;
+  const user = usersData.find(u => u.id === userId);
+  
+  if (!user) return res.status(404).send('Not found');
+
+  res.render('user.pug', { user });
 }
 
 export const putUserByIdHandler = (req, res) => {

@@ -10,6 +10,10 @@ const app = express();
 
 app.use(express.json());
 app.use(logRequests);
+
+app.set('views', './src/views'); 
+app.use(express.static('./public'));
+
 app.use(router);
 app.use(errorHandler);
 

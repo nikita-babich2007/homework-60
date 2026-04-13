@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    title Список користувачів
+    link(rel="stylesheet", href="/css/style.css")
+  body
+    h1 Список користувачів (PUG)
+    ul
+      each user in users
+        li
+          a(href=`/users/${user.id}`) #{user.name} — #{user.role}

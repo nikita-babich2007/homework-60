@@ -1,0 +1,19 @@
+doctype html
+html
+  head
+    title Деталі користувача
+    link(rel="stylesheet", href="/css/style.css")
+  body
+    div.card
+      h1 Деталі користувача
+      p 
+        strong ID: 
+        | #{user.id}
+      p 
+        strong Ім'я: 
+        | #{user.name}
+      p 
+        strong Роль: 
+        | #{user.role}
+      br
+      a(href="/users") ⬅ Назад до списку
