@@ -1,7 +1,4 @@
-import jwt from 'jsonwebtoken';
-
-const usersDB = []; 
-const SECRET = process.env.JWT_SECRET || 'super_secret_key_123';
+import { usersDB } from '../data/users.js';
 
 export const setThemeHandler = (req, res) => {
   const { theme } = req.body;
@@ -12,27 +9,24 @@ export const setThemeHandler = (req, res) => {
 };
 
 export const registerHandler = (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) return res.status(400).send('Username and password required');
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).send('Email і пароль обов\'язкові');
 
-  const userExists = usersDB.find(u => u.username === username);
-  if (userExists) return res.status(400).send('User already exists');
+  const userExists = usersDB.find(u => u.email === email);
+  if (userExists) return res.status(400).send('Користувач вже існує');
 
-  usersDB.push({ username, password });
+  const newUser = { email, password };
+  usersDB.push(newUser);
 
-  const token = jwt.sign({ username }, SECRET, { expiresIn: '1h' });
-
-  res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
-  res.send('User registered successfully and logged in');
+  req.login(newUser, (err) => {
+    if (err) return res.status(500).send('Ошибка сервера');
+    res.send('Регістрація успішна, ви увійшли в систему!');
+  });
 };
 
-export const loginHandler = (req, res) => {
-  const { username, password } = req.body;
-  const user = usersDB.find(u => u.username === username && u.password === password);
-
-  if (!user) return res.status(401).send('Invalid credentials');
-
-  const token = jwt.sign({ username }, SECRET, { expiresIn: '1h' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
-  res.send('Logged in successfully');
+export const logoutHandler = (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.send('Ви успішно вийшли з системи');
+  });
 };
