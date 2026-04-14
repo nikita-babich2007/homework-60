@@ -3,12 +3,14 @@ import 'dotenv/config';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from './config/passport.js';
+import { connectDB } from './config/db.js';
 import router from './routes/index.js';
 import { logRequests } from './middlewares/logger.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
-const PORT = 3000;
 const app = express();
+
+connectDB();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -34,6 +36,6 @@ app.use(express.static('./public'));
 app.use(router);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server is running on port ${process.env.PORT || 3000}`);
 });

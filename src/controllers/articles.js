@@ -1,23 +1,39 @@
-const articlesData = [
-  { id: '1', title: 'Вступ до Node.js', content: 'Node.js дозволяє писати бекенд на JavaScript.' },
-  { id: '2', title: 'Що таке Express?', content: 'Це мінімалістичний фреймворк для Node.js.' }
-];
+import Article from '../models/Article.js';
 
-export const getArticlesHandler = (req, res) => {
-  res.render('articles.ejs', { articles: articlesData });
+export const getArticlesHandler = async (req, res) => {
+  try {
+    const articles = await Article.find();
+    res.render('articles.ejs', { articles });
+  } catch (error) {
+    console.error('Помилка отримання статей:', error.message);
+    res.status(500).send('Помилка сервера');
+  }
+};
+
+export const postArticlesHandler = async (req, res) => {
+  try {
+    const { title, content } = req.body;
+    const article = new Article({ title, content });
+    await article.save();
+    res.status(201).json(article);
+  } catch (error) {
+    console.error('Помилка створення статті:', error.message);
+    res.status(500).send('Помилка сервера');
+  }
 }
 
-export const postArticlesHandler = (req, res) => {
-  res.end('Post articles route');
-}
+export const getArticleByIdHandler = async (req, res) => {
+  try {
+    const articleId = req.params.articleId;
+    const article = await Article.findById(articleId);
 
-export const getArticleByIdHandler = (req, res) => {
-  const articleId = req.params.articleId;
-  const article = articlesData.find(a => a.id === articleId);
-  
-  if (!article) return res.status(404).send('Not found');
-  
-  res.render('article.ejs', { article });
+    if (!article) return res.status(404).send('Not found');
+
+    res.render('article.ejs', { article });
+  } catch (error) {
+    console.error('Помилка отримання статті:', error.message);
+    res.status(500).send('Помилка сервера');
+  }
 }
 
 export const putArticleByIdHandler = (req, res) => {
