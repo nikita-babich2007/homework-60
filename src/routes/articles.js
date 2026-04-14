@@ -1,12 +1,27 @@
 import express from 'express';
-import { getArticlesHandler, getArticleByIdHandler, postArticlesHandler, putArticleByIdHandler, deleteArticleByIdHandler } from '../controllers/articles.js';
-import { verifyJWT } from '../middlewares/jwtAuth.js';
+import { 
+  getArticlesHandler, getArticleByIdHandler, 
+  postArticleHandler, postManyArticlesHandler, 
+  updateOneArticleHandler, replaceOneArticleHandler, updateManyArticlesHandler,
+  deleteOneArticleHandler, deleteManyArticlesHandler 
+} from '../controllers/articles.js';
 
 const articlesRouter = express.Router();
 
-articlesRouter.use(verifyJWT);
+// articlesRouter.use(ensureAuthenticated);
 
-articlesRouter.route('/').get(getArticlesHandler).post(postArticlesHandler);
-articlesRouter.route('/:articleId').get(getArticleByIdHandler).put(putArticleByIdHandler).delete(deleteArticleByIdHandler);
+articlesRouter.route('/')
+  .get(getArticlesHandler)
+  .post(postArticleHandler);
+
+articlesRouter.post('/bulk', postManyArticlesHandler);
+articlesRouter.patch('/bulk', updateManyArticlesHandler);
+articlesRouter.delete('/bulk', deleteManyArticlesHandler);
+
+articlesRouter.route('/:articleId')
+  .get(getArticleByIdHandler)
+  .patch(updateOneArticleHandler)
+  .put(replaceOneArticleHandler)  
+  .delete(deleteOneArticleHandler);
 
 export default articlesRouter;
