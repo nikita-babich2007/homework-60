@@ -90,3 +90,51 @@ export const deleteManyArticlesHandler = async (req, res) => {
     res.status(400).send('Помилка при масовому видаленні');
   }
 };
+
+export const getArticlesCursorHandler = async (req, res) => {
+  try {
+    const cursor = Article.find().cursor();
+
+    res.setHeader('Content-Type', 'application/json');
+    res.write('[');
+    
+    let isFirst = true;
+
+    for await (const doc of cursor) {
+      if (!isFirst) res.write(',');
+      res.write(JSON.stringify(doc));
+      isFirst = false;
+    }
+
+    res.write(']');
+    res.end();
+  } catch (error) {
+    res.status(500).send('Помилка при роботі з курсором');
+  }
+};
+
+export const getArticlesStatsHandler = async (req, res) => {
+  try {
+    const stats = await Article.aggregate([
+      {
+        $project: {
+          titleLength: { $strLenCP: "$title" },
+          contentLength: { $strLenCP: "$content" }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalArticles: { $sum: 1 }, // Рахуємо загальну кількість
+          avgTitleLength: { $avg: "$titleLength" }, // Середня довжина заголовка
+          avgContentLength: { $avg: "$contentLength" } // Середня довжина тексту
+        }
+      }
+    ]);
+
+    const result = stats.length > 0 ? stats[0] : { message: "Немає даних для статистики" };
+    res.json(result);
+  } catch (error) {
+    res.status(500).send('Помилка агрегації');
+  }
+};

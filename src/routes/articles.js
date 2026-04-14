@@ -3,7 +3,7 @@ import {
   getArticlesHandler, getArticleByIdHandler, 
   postArticleHandler, postManyArticlesHandler, 
   updateOneArticleHandler, replaceOneArticleHandler, updateManyArticlesHandler,
-  deleteOneArticleHandler, deleteManyArticlesHandler 
+  deleteOneArticleHandler, deleteManyArticlesHandler, getArticlesCursorHandler, getArticlesStatsHandler
 } from '../controllers/articles.js';
 
 const articlesRouter = express.Router();
@@ -17,6 +17,9 @@ articlesRouter.route('/')
 articlesRouter.post('/bulk', postManyArticlesHandler);
 articlesRouter.patch('/bulk', updateManyArticlesHandler);
 articlesRouter.delete('/bulk', deleteManyArticlesHandler);
+
+articlesRouter.get('/cursor', getArticlesCursorHandler);
+articlesRouter.get('/stats', getArticlesStatsHandler);
 
 articlesRouter.route('/:articleId')
   .get(getArticleByIdHandler)
