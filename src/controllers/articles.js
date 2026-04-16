@@ -125,9 +125,9 @@ export const getArticlesStatsHandler = async (req, res) => {
       {
         $group: {
           _id: null,
-          totalArticles: { $sum: 1 }, // Рахуємо загальну кількість
-          avgTitleLength: { $avg: "$titleLength" }, // Середня довжина заголовка
-          avgContentLength: { $avg: "$contentLength" } // Середня довжина тексту
+          totalArticles: { $sum: 1 },
+          avgTitleLength: { $avg: "$titleLength" },
+          avgContentLength: { $avg: "$contentLength" }
         }
       }
     ]);

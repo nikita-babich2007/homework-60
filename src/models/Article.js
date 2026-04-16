@@ -3,12 +3,23 @@ import mongoose from 'mongoose';
 const articleSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: [true, 'Заголовок є обов\'язковим'],
+    trim: true,
+    index: true
   },
   content: {
     type: String,
-    required: true,
+    required: [true, 'Текст не може бути порожнім'],
+    minlength: [10, 'Текст має містити мінімум 10 символів']
+  },
+  author: {
+    type: String,
+    default: 'Анонімний користувач'
   }
-}, { timestamps: true });
+}, { 
+  timestamps: true
+});
 
-export default mongoose.model('Article', articleSchema);
+const Article = mongoose.model('Article', articleSchema);
+
+export default Article;
